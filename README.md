@@ -1,1 +1,1 @@
-# tai_projects
+TAI'de atanan projelere sunduğum çözümler.
