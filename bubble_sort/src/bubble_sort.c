@@ -11,20 +11,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void bubblesort(int arr[], int len);
+void bubbleSort(int arr[], int len);
 
 int main(void) {
 	// test array:
 	int array[] = {24, 14, 15, 7, 4, 27, 1, 8};
 	int len = sizeof(array)/sizeof(array[0]);
 
-	bubblesort(array, len);
+	bubbleSort(array, len);
 
 	return EXIT_SUCCESS;
 }
 
 
-void bubblesort(int arr[], int len) {
+void bubbleSort(int arr[], int len) {
 
 	int temp, i, j, k;
 
