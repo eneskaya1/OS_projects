@@ -13,23 +13,19 @@
 
 void mergeSort(int arr[], int start, int finish);
 void merge(int arr[], int start, int middle, int finish);
+void printArray(int arr[], int len);
+
+static int cnt = 1;
 
 int main(void) {
 
 	// sample test array
 	int arrayToSort[] = {15, 19, 4, 3, 18, 6, 2, 12, 7, 9, 11, 16};
 	int len = sizeof(arrayToSort)/sizeof(arrayToSort[0]);
-	int i;
 	puts("Array to sort: ");
-	for(i=0; i<len; i++) {
-		printf("%d ", arrayToSort[i]);
-	}
-	puts("\nSorted array: ");
+	printArray(arrayToSort, len);
 
 	mergeSort(arrayToSort, 0, len-1);
-	for(i=0; i<len; i++) {
-		printf("%d ", arrayToSort[i]);
-	}
 
 	return EXIT_SUCCESS;
 }
@@ -92,5 +88,16 @@ void merge(int arr[], int start, int middle, int finish) {
 		indexArr++;
 		index2++;
 	}
+	printf("Step %d: ", cnt);
+	printArray(arr, finish-start+1);
+	cnt++;
 }
 
+void printArray(int arr[], int len) {
+	int k;
+	for(k=0; k<len; k++)
+	{
+		printf("%d ", arr[k]);
+	}
+	printf("%s", "\n");
+}

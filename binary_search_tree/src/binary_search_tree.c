@@ -25,27 +25,41 @@ void travPreOrder(TreeNodePtr treePtr);
 void travPostOrder(TreeNodePtr treePtr);
 void findMax(TreeNodePtr treePtr);
 void findMin(TreeNodePtr treePtr);
+void searchPath(TreeNodePtr treePtr, int path[], int data);
+void printPath(int arr[], int len);
+
+static int cnt = 0;
 
 int main() {
     // Sample code to test the search tree functions
 	TreeNodePtr treePtr = NULL;
-	insert(&treePtr, 12);
-	insert(&treePtr, 200);
+	insert(&treePtr, 14);
+	insert(&treePtr, 150);
+	insert(&treePtr, 125);
 	insert(&treePtr, 190);
-	insert(&treePtr, 213);
-	insert(&treePtr, 56);
-	insert(&treePtr, 10);
-	insert(&treePtr, 24);
-	insert(&treePtr, 18);
+	insert(&treePtr, 65);
+	insert(&treePtr, 7);
+	insert(&treePtr, 36);
 	insert(&treePtr, 27);
-	insert(&treePtr, 28);
+	insert(&treePtr, 51);
+	insert(&treePtr, 66);
 	travInOrder(treePtr);
 	//travPreOrder(treePtr);
 	//travPostOrder(treePtr);
 	findMax(treePtr);
 	findMin(treePtr);
 
-    return 0;
+	int path[10];
+	int data = 36;
+	//printf("\nEnter a number to search in the tree: ");
+	//scanf("%d", &data);
+	searchPath(treePtr, path, data);
+	data = 70;
+	searchPath(treePtr, path, data);
+	data = 66;
+	searchPath(treePtr, path, data);
+
+	return 0;
 }
 
 void insert(TreeNodePtr* treePtr, int data) {
@@ -107,6 +121,41 @@ void findMin(TreeNodePtr treePtr) {
 	while(treePtr->leftPtr != NULL) {
 		treePtr = treePtr->leftPtr;
 	}
-	printf("\nMax number in the tree: %d", treePtr->data);
+	printf("\nMin number in the tree: %d", treePtr->data);
 }
 
+void searchPath(TreeNodePtr treePtr, int path[], int data) {
+	if(treePtr == NULL) {
+		printf("Path to %d:\n", data);
+		printf("Data not found!");
+	}
+	else {
+		path[cnt] = treePtr->data;
+
+		if(treePtr->data == data) {
+			//no operation
+			printf("\nPath to %d:\n", data);
+			printPath(path, cnt+1);
+			cnt = 0;
+		}
+		else if(data < treePtr->data) {
+			cnt++;
+			searchPath(treePtr->leftPtr, path, data);
+		}
+		else {
+			// (data > treePtr->data)
+			cnt++;
+			searchPath(treePtr->rightPtr, path, data);
+		}
+	}
+}
+
+void printPath(int arr[], int len) {
+	printf("%d", arr[0]);
+	int k;
+	for(k=1; k<len; k++)
+	{
+		printf("->%d", arr[k]);
+	}
+	printf("%s", "\n");
+}
