@@ -23,31 +23,35 @@
 
 void child_routine(pid_t pid);
 void parent_routine(pid_t pid);
+void kill_children(pid_t *pid);
 
 int main(void) {
 
     time_t t;
 
-    printf("Parent ID = %ld\n\n", (long)getppid());
+    printf("Parent ID = %ld\n", (long)getppid());
+    time(&t);
+    printf("Process creation time: %s\n", ctime(&t));
 
-    pid_t pid;
+    pid_t pid[3];
     int i;
     for(i=1; i<=3; i++) {
-        pid = fork();
-    	if(pid < 0)
+        pid[i] = fork();
+    	if(pid[i] < 0)
 	        printf("\nFork failed!");
-	    if(pid == 0) {
-	        child_routine(pid);
+	    if(pid[i] == 0) {
+	        child_routine(pid[i]);
 	        time(&t);
 	        printf("Process creation time: %s\n", ctime(&t));
 	    }
 	    else {
-	        parent_routine(pid);
+	        parent_routine(pid[i]);
 	        time(&t);
         	printf("Process creation time: %s\n", ctime(&t));
 	    }
     }
-    //kill(parent, SIGTERM);
+    kill_children(pid);
+
 	return 0;
 }
 
@@ -63,4 +67,18 @@ void child_routine(pid_t pid) {
 void parent_routine(pid_t pid) {
 	int	status;
 	waitpid(pid, &status, 0); // Wait for child
+}
+
+void kill_children(pid_t *pid) {
+    int	status;
+    int	i;
+
+    for(i=1; i<=3; i++) {
+        kill(pid[i], SIGKILL);
+    }
+
+    for(i=1; i<=3; i++) {
+        waitpid(pid[i], &status, 0);
+        printf("Child [%d] was killed.\n", pid[i]);
+    }
 }
