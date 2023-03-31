@@ -26,8 +26,11 @@ typedef struct textArgs TextArgs;
 pthread_t fileWrite[2];
 pthread_t fileRead;
 char *test[TOTAL];
+pthread_mutex_t lock;
 
 void* writing(void *args) {
+	pthread_mutex_lock(&lock);
+
     TextArgs *TextArgsPtr = args;
     char *fileName = TextArgsPtr->fileName;
     char *text = TextArgsPtr->text;
@@ -36,10 +39,14 @@ void* writing(void *args) {
     fputs(text, fp);
 
     fclose(fp);
-    pthread_exit(0);
+
+    pthread_mutex_unlock(&lock);
+    return NULL;
 }
 
 void* reading(void *arg) {
+	pthread_mutex_lock(&lock);
+
     char *fileName = (char *)arg;
     FILE *fp;
     fp = fopen(fileName, "r");
@@ -55,11 +62,19 @@ void* reading(void *arg) {
    }
 
     fclose(fp);
-    pthread_exit(0);
+
+    pthread_mutex_unlock(&lock);
+    return NULL;
 }
 
 int main(void)
 {
+	if (pthread_mutex_init(&lock, NULL) != 0) {
+		printf("\n mutex init has failed\n");
+		return 1;
+	}
+
+
     TextArgs thread1Args;
     sprintf(thread1Args.fileName, "file.txt");
     sprintf(thread1Args.text, "Thread 1");
@@ -73,7 +88,7 @@ int main(void)
     pthread_create(&fileRead, NULL, reading, "file.txt");
     pthread_join(fileRead, NULL);
 
-
+    pthread_mutex_destroy(&lock);
 
     return 0;
 }
