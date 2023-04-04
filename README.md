@@ -1,4 +1,4 @@
-TAI'de Tamamladığım Projeler ve Uygulamalar
+Tamamladığım Projeler ve Uygulamalar
 
 * Fiziksel Bellek Tahsisi Projesi: 
   Bu projede linked list yapısını kullanarak freeWithAddr, allocateWithAddr ve allocateWithoutAddr fonksiyonlarının implemantasyonu yapılarak oluşturulan algoritma
