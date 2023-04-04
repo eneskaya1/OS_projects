@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : process_functions.c
+ Name        : kill_parent_process.c
  Author      : 
  Version     :
  Copyright   : Your copyright notice

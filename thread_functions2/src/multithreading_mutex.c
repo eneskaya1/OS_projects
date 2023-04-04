@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : thread_functions2.c
+ Name        : multithreading_mutex.c
  Author      : 
  Version     :
  Copyright   : Your copyright notice
