@@ -15,7 +15,7 @@
 #include<unistd.h>
 
 pthread_t tid[2];
-int ret1,ret2;
+static int count1=0, count2=0;
 
 void* myThread(void *arg)
 {
@@ -23,13 +23,11 @@ void* myThread(void *arg)
 
     if(pthread_equal(currentid, tid[0])) {
         printf("First thread processing done\n");
-        ret1  = 100;
-        pthread_exit(&ret1);
+        count1++;
     }
     else {
         printf("Second thread processing done\n");
-        ret2  = 200;
-        pthread_exit(&ret2);
+        count2++;
     }
 
     return NULL;
@@ -37,23 +35,18 @@ void* myThread(void *arg)
 
 int main(void)
 {
-    int i;
-    int err;
-    int *ptr[2];
-
-    for (i = 0; i < 2; i++) {
-        err = pthread_create(&(tid[i]), NULL, &myThread, NULL);
-        if (err != 0)
-            printf("\ncan't create thread :[%s]", strerror(err));
-        else
-            printf("Thread %d created successfully\n", i+1);
+    int i, j =0;
+    while(j<5) {
+    	for (i = 0; i < 2; i++) {
+    		pthread_create(&(tid[i]), NULL, &myThread, NULL);
+    	}
+    	j++;
     }
 
-    pthread_join(tid[0], (void**)&(ptr[0]));
-    pthread_join(tid[1], (void**)&(ptr[1]));
+    pthread_join(tid[0], NULL);
+    pthread_join(tid[1], NULL);
 
-    printf("Return value from first thread is [%d]\n", *ptr[0]);
-    printf("Return value from second thread is [%d]\n", *ptr[1]);
+    printf("Thread1: %d \t\tThread2: %d", count1, count2);
 
     return 0;
 }

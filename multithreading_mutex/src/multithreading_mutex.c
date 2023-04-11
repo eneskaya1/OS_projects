@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : multithreading_semaphore.c
+ Name        : multithreading_mutex.c
  Author      : 
  Version     :
  Copyright   : Your copyright notice
@@ -13,21 +13,21 @@
 #include<pthread.h>
 #include<stdlib.h>
 #include<unistd.h>
-#include<semaphore.h>
 
 #define BUFSIZE 15
 
 pthread_t fileWrite[2];
 pthread_t fileRead;
-sem_t mutex;
+pthread_mutex_t lock;
 
 char *fileName = "file.txt";
 static int cnt_write1=0, cnt_write2=0, cnt_read=0;
 
 void* writing(void *arg) {
-	sem_wait(&mutex);
 
-	char *text = (char *)arg;
+	pthread_mutex_lock(&lock);
+
+    char *text = (char *)arg;
     FILE *fp;
     fp = fopen(fileName, "w");
     fputs(text, fp);
@@ -43,27 +43,27 @@ void* writing(void *arg) {
         cnt_write2++;
     }
 
-    sem_post(&mutex);
+    pthread_mutex_unlock(&lock);
+
     return NULL;
 }
 
 void* reading(void *arg) {
 
-	sem_wait(&mutex);
-
-    char ch;
+	pthread_mutex_lock(&lock);
 
     FILE *fp;
     fp = fopen(fileName, "r");
     if(fp == NULL) {
-       	printf("File can't be opened \n");
+    	printf("File can't be opened \n");
     }
 
     printf("Content in %s:  ", fileName);
-
+    char ch;
     do {
-     	ch = fgetc(fp);
+    	ch = fgetc(fp);
     	printf("%c", ch);
+
     } while(ch != EOF);
     puts("");
 
@@ -71,33 +71,37 @@ void* reading(void *arg) {
 
     cnt_read++;
 
-    sem_post(&mutex);
+    pthread_mutex_unlock(&lock);
+
     return NULL;
 }
 
 int main(void)
 {
-	sem_init(&mutex, 0, 1);
-
-	char texts[2][10] = {"Thread 1", "Thread 2"};
-
-	int i=0, j;
-	while(i<1000) {
-	   	for(j=0; j<2; j++) {
-	  		pthread_create(&fileWrite[j], NULL, &writing, texts[j]);
-	   	}
-	   	pthread_create(&fileRead, NULL, &reading, NULL);
-	   	i++;
+	if (pthread_mutex_init(&lock, NULL) != 0) {
+		printf("\n mutex init has failed\n");
+		return 1;
 	}
 
-	printf("%s\t%s\t%s\t%s\n", "Operations","Write Thread 1", "Write Thread 2", "Read");
-	printf("%s\t%d\t\t%d\t\t%d", "Number of Op.:", cnt_write1, cnt_write2, cnt_read);
+    char texts[2][10] = {"Thread 1", "Thread 2"};
+
+    int i=0, j;
+    while(i<1000) {
+    	for(j=0; j<2; j++) {
+    		pthread_create(&fileWrite[j], NULL, &writing, texts[j]);
+    	}
+    	pthread_create(&fileRead, NULL, &reading, NULL);
+     	i++;
+    }
+
+    printf("%s\t%s\t%s\t%s\n", "Operations","Write Thread 1", "Write Thread 2", "Read");
+    printf("%s\t%d\t\t%d\t\t%d", "Number of Op.:", cnt_write1, cnt_write2, cnt_read);
 
     pthread_join(fileWrite[0], NULL);
     pthread_join(fileWrite[1], NULL);
     pthread_join(fileRead, NULL);
 
-    sem_destroy(&mutex);
+    pthread_mutex_destroy(&lock);
 
     return 0;
 }
