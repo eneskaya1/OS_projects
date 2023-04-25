@@ -1,4 +1,4 @@
-Tamamladığım Projeler ve Uygulamalar
+Veri Yapıları ve İşletim Sistemleri - Tamamladığım Projeler ve Uygulamalar
 
 * Fiziksel Bellek Tahsisi Projesi:
   Bu projede linked list yapısını kullanarak freeWithAddr, allocateWithAddr ve allocateWithoutAddr fonksiyonlarının implemantasyonu yapılarak oluşturulan algoritma Atabey Şahin tarafından verilen test caseler üzerinde denendi ve bu testler başarıyla sonuçlandı.
